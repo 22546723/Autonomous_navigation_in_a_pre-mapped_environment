@@ -1,3 +1,4 @@
+% TEST USING IMAGES
 %load marker images
 marker_0 = imread("markers/id0.png");
 marker_3 = imread("markers/id3.png");
@@ -43,3 +44,6 @@ res.Properties.VariableNames = ["Actual ID", "Recognised ID", "Identified"];
 disp(res)
 
 disp("Accuracy: " + hit_rate*100 + "%")
+
+% COMMENTS
+% so far it only misses the partially shaded/obscured markers
