@@ -1,0 +1,19 @@
+% %Read test marker
+% img = imread("markers/id23.png");
+% % call detect_marker.py to get the marker id
+% id = pyrunfile("detect_marker.py", "ids", img=img);
+% disp(id)
+
+function id = find(img)
+    % call detect_marker.py to get the marker id
+    id = pyrunfile("detect_marker.py", "ids", img=img);
+end
+
+classdef marker_recognition
+    meth
+end
+
+%Current marker settings: 
+%size: 70mm
+%dict: cv.aruco.DICT_7X7_100
+%generated using: https://chev.me/arucogen/

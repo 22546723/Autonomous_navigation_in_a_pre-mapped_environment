@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-#import imutils
+import imutils
 
 # uses opencv aruco namespace to detect the marker info
 def detect(img):
@@ -16,13 +16,15 @@ detector = cv.aruco.ArucoDetector(dictionary, parameters)
 
 # reformat the input image array from a memory view to a numpy array
 img = np.asarray(img)
-#img = imutils.resize(img, width=600)
+image = imutils.resize(image, width=600)
 
 # converts the image to greyscale. Might need later
 # IMPORTANT: note the RGB bit in RGB to gray. It might need to be BGR
 gray = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
 
+cv.imshow(gray)
+
 # get the image info
-(corners, ids, rejected) = detect(img)
+(corners, ids, rejected) = detect(gray)
 
 
