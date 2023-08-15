@@ -1,6 +1,8 @@
 % NB: all images used for testing MUST be named '...<ID>.png' otherwise the
 % script won't be able to read the image IDs from the file names
 
+%create datastores of the folders containing the images to be used for
+%testing
 imds_actual = imageDatastore("markers/actual/");
 imds_digital = imageDatastore("markers/digital/");
 
