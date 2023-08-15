@@ -1,6 +1,15 @@
 # Navigation_using_markers
 Skripsie project 2023. Aims to allow autonomous marker-to-marker navigation in a pre-mapped environment.
 
+## Updates:
+The marker recognition is now working. To test it download the following: <br />
+detect_marker.py <br />
+marker_recognition.m <br />
+test_marker_recognition.m <br />
+markers folder <br />
+<br />
+Then run test_marker_recognition.m
+
 ## Installs required to run:
 ### Python 3.10
 Link to downloads: <br />
