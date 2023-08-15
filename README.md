@@ -4,8 +4,10 @@ Skripsie project 2023. Aims to allow autonomous marker-to-marker navigation in a
 ## Installs required to run:
 ### Python 3.10
 Link to downloads:
-[Mac] (https://www.python.org/downloads/macos/)
-[Windows] (https://www.python.org/downloads/windows/)
+[Mac]
+(https://www.python.org/downloads/macos/)
+[Windows]
+(https://www.python.org/downloads/windows/)
 
 ### OpenCV for Python
 Run this command to install:
