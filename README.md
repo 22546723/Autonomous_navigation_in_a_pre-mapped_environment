@@ -15,4 +15,4 @@ _Note: This project uses OpenCV version 4.8.0.76_
 ## Configure Matlab to use correct Python version:
 Find the Python3 executable path by running `which python3` in the terminal. <br />
 Then run `pe = pyenv('Version','<path_of_python3_executable>')` in Matlab to configure it. <br />
-_Note: Matlab 2023a can only use up to Python 3.10_
+_Note: Matlab 2023a can only use up to Python 3.10. This [link](https://www.mathworks.com/support/requirements/python-compatibility.html) shows compatable Python versions for different Matlab releases._
