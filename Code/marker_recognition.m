@@ -7,7 +7,7 @@ classdef marker_recognition
             % replace the py.none ids with 0 and record where they occured
             found = isa(id, "py.numpy.ndarray");
             if ~found
-                id = 0;
+                id = 404;
             end
         end
     end

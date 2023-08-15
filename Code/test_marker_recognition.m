@@ -1,26 +1,41 @@
-% TEST USING IMAGES
-%load marker images
-marker_0 = imread("markers/id0.png");
-marker_3 = imread("markers/id3.png");
-marker_7 = imread("markers/id7.png");
-marker_23 = imread("markers/id23.png");
-marker_34 = imread("markers/id34.png");
+% NB: all images used for testing MUST be named '...<ID>.png' otherwise the
+% script won't be able to read the image IDs from the file names
 
-marker_0_r = imread("markers/m0.png");
-marker_3_r = imread("markers/m3.png");
-marker_7_r = imread("markers/m7.png");
-marker_23_r = imread("markers/m23.png");
-marker_34_r = imread("markers/m34.png");
+imds_actual = imageDatastore("markers/actual/");
+imds_digital = imageDatastore("markers/digital/");
 
-%add them into an array
-markers = {marker_0 marker_3 marker_7 marker_23 marker_34 marker_0_r ...
-    marker_3_r marker_7_r marker_23_r marker_34_r};
+runTest(imds_actual, "Actual images");
+runTest(imds_digital, "Digital images");
 
-%array of the correct marker ids
-marker_ids = [0 3 7 23 34 0 3 7 23 34];
+function runTest(imds, disp_header)
+% SETUP
+len = length(imds.Files);
+imgs = cell(1, len);
+ids = cell(1, len);
 
-len = 10;
+%Read images in datastore. Get ids from the filenames
+i = 1;
+while hasdata(imds)
+    [img, id] = read(imds);
+    id = id.Filename;
 
+    % check num id digits in filename & set id val
+    id_len = length(id);
+    id_0 = id(id_len - 5);
+
+    if isempty(str2num(id_0))
+        id = str2num(id(id_len - 4));        
+    else
+        id = str2num(id(id_len-5:id_len-4));
+    end
+
+    imgs{1, i} = img;
+    ids{1, i} = id;
+
+    i = i+1;
+end
+
+% TEST
 rec_ids = zeros([1 len]);
 found = zeros([1 len]);
 
@@ -30,20 +45,27 @@ hit_count = 0;
 
 %get the recognised ids and count hits
 for i=1:len
-    [rec_ids(i), found(i)] = markerRec.find(markers{i});
-    if (rec_ids(i)==marker_ids(i))
+    [rec_ids(i), found(i)] = markerRec.find(imgs{1, i});
+    if (rec_ids(i)==ids{1, i})
         hit_count = hit_count + 1;
     end
 end
 
 hit_rate = hit_count/len;
 
+ids_disp = cell2mat(ids.');
+
 %display
-res = table(marker_ids.', rec_ids.', found.');
+disp(disp_header)
+
+res = table(ids_disp, rec_ids.', found.');
 res.Properties.VariableNames = ["Actual ID", "Recognised ID", "Identified"];
 disp(res)
 
 disp("Accuracy: " + hit_rate*100 + "%")
+disp("_________________________________")
+
+end
 
 % COMMENTS
 % so far it only misses the partially shaded/obscured markers
