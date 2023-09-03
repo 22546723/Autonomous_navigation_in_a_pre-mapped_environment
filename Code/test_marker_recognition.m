@@ -40,6 +40,7 @@ end
 % TEST
 rec_ids = zeros([1 len]);
 found = zeros([1 len]);
+corners = cell(1, len);
 
 markerRec = marker_recognition;
 
@@ -47,7 +48,7 @@ hit_count = 0;
 
 %get the recognised ids and count hits
 for i=1:len
-    [rec_ids(i), found(i)] = markerRec.find(imgs{1, i});
+    [rec_ids(i), found(i), corners{i}] = markerRec.find(imgs{1, i});
     if (rec_ids(i)==ids{1, i})
         hit_count = hit_count + 1;
     end
@@ -67,6 +68,8 @@ disp(res)
 disp("Accuracy: " + hit_rate*100 + "%")
 disp("_________________________________")
 
+disp(size(imgs{1, 1}))
+%disp(corners{1})
 end
 
 % COMMENTS
