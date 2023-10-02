@@ -1,12 +1,14 @@
 classdef pose_estimator
     properties
+        map;
         cam_intrinsics;
         tag_size;
-        tag_family;
+        tag_family;    
     end
 
     methods
-        function obj = pose_estimator(intrinsics, tag_size, tag_family)
+        function obj = pose_estimator(map, intrinsics, tag_size, tag_family)
+            obj.map = map;
             obj.cam_intrinsics = intrinsics;
             obj.tag_family = tag_family;
             obj.tag_size = tag_size;
@@ -17,7 +19,7 @@ classdef pose_estimator
             [id, loc, pose] = readAprilTag(frame, obj.tag_family, intrinsics, obj.tag_size);
         end
 
-        function [x_coord, y_coord, angle] = pose_from_marker(id, loc, pose)
+        function marker_pos = pose_from_marker(id, loc, pose)
             %temp
             x_coord = 0;
             y_coord = 0;
@@ -30,6 +32,7 @@ classdef pose_estimator
                     x = 0;
                     y = 0;
                     z = 0;
+                    angle = 0;
 
                     %Not working yet - can't seem to get the correct coords
                     %%%%%%%%%%%%
@@ -40,7 +43,7 @@ classdef pose_estimator
                         x = x + temp(1);
                         y = y + temp(2);
                         z = z + temp(3);
-                    end
+                    end %for j
                     %get avg coords of the markers and convert from mm to m
                     x = x/4;
                     y = y/4;
@@ -48,12 +51,47 @@ classdef pose_estimator
                     %%%%%%%%%%%%
 
                     %Add marker coord offset
-                    x_base = 
-                end
+                    x_base = 0;
+                    y_base = 0;
+                    angle_base = 0;
+                    for m=obj.map.markers
+                        if m.id==id(n)
+                            x_base = m.x_coord;
+                            y_base = m.y_coord;
+                            angle_base = m.angle;
+                        end %if
+                    end %for m
+
+                    %add to total world coordinates
+                    x_coord = x_coord + (x_base + x);
+                    y_coord = y_coord + (y_base + y);
+                    angle = angle_coord + (angle_base + angle);
+
+                end %for n
            
-                
-            end
-        end
+                %get avg world coordinates
+                x_coord = x_coord/num_tags;
+                y_coord = y_coord/num_tags;
+                angle = angle/num_tags;                
+            end %if empty
+
+            %put together final position
+            marker_pos = [x_coord; y_coord; angle];
+
+        end %pose from marker
+
+%TODO: write pose_from_control function        
+        function control_pos = pose_from_control(control_instructions, prev_pos)
+            control_pos = prev_pos + control_instructions;
+        end %pose from control
+
+        function current_pos = get_current_pos(obj, marker_pos, control_pos)
+            if ~isempty(marker_pos)
+                current_pos = marker_pos;
+            else
+                current_pos = control_pos;
+            end %if else
+        end %get current pos
 
 %         function output = estimate(obj, frame)
 %             cam_data = load("calibration/camera_params.mat");
