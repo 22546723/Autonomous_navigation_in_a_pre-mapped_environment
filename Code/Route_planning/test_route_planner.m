@@ -25,15 +25,30 @@ ref_len = length(ref_signal)+1;
 xr = zeros(ref_len, 1, 1, "double");
 yr = zeros(ref_len, 1, 1, "double");
 
+hold on
 for n=1:ref_len-1
     xr(n) = ref_signal{n}.start(1);
     yr(n) = ref_signal{n}.start(2);
 
     xr(n+1) = ref_signal{n}.stop(1);
     yr(n+1) = ref_signal{n}.stop(2);
+
+    %plot curves
+    R = ref_signal{n}.R;
+    pnt = ref_signal{n}.mid_point;
+    xm = pnt(1)-R:0.2:pnt(1)+R;
+
+    dx = xm-pnt(1);
+    theta = acos(dx/R);
+    ym = R*sin(theta);
+    yp = pnt(2) + abs(ym);
+    yn = pnt(2) - abs(ym);
+
+    plot(xm, yp, xm, yn)
 end
 
 plot(xr, yr)
+hold off
 title("Route")
 xlabel("X");
 ylabel("Y");

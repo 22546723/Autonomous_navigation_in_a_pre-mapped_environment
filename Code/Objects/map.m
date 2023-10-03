@@ -1,4 +1,12 @@
 classdef map
+    % map   Map object containing the details of an environment
+    % map Properties:
+    %   weighted_graph - A weighted graph of the nodes in the environment
+    %   nodes - List of node objects in the environment
+    %   markers - List of marker objects in the environment
+    %
+    % map Methods:
+    %   map - class intitialisation 
     properties
         weighted_graph;
         nodes;
@@ -6,6 +14,9 @@ classdef map
     end %properties
     methods
         function obj = map(coord_data, graph_data, marker_data)
+            % map   Initialise the map class
+            % 
+
             %generate node objects
             num_nodes = length(coord_data);
             obj.nodes = cell(num_nodes, 1);

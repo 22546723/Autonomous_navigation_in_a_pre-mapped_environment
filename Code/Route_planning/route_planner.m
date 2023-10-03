@@ -38,12 +38,12 @@ classdef route_planner
                 B = coords(:, n+1);
                 C = coords(:, n+2);
 
-                [start_turn, end_turn, R] = calc_turn(obj, A, B, C);                
+                [start_turn, end_turn, R, mid_pt] = calc_turn(obj, A, B, C);                
 
                 %break into segments
-                ref_signal{n} = path_segment(A, start_turn, 0);
-                ref_signal{n+1} = path_segment(start_turn, end_turn, R);
-                ref_signal{n+2} = path_segment(end_turn, C, 0);
+                ref_signal{n} = path_segment(A, start_turn, 0, 0);
+                ref_signal{n+1} = path_segment(start_turn, end_turn, R, mid_pt);
+                ref_signal{n+2} = path_segment(end_turn, C, 0, 0);
             end %for
 
         end %convert
@@ -51,7 +51,7 @@ classdef route_planner
     end %methods
 
     methods (Access = private)
-        function [start_turn, end_turn, R] = calc_turn(obj, A, B, C)
+        function [start_turn, end_turn, R, mid_pt] = calc_turn(obj, A, B, C)
             R_min = 0.1; %m
 
             if B(1)==A(1)
@@ -70,6 +70,7 @@ classdef route_planner
                 R = 0; %straight line
                 start_turn = A;
                 end_turn = C;
+                mid_pt = B;
             else
                 c1 = B(2) - m1*B(1);
                 c2 = B(2) - m2*B(1);
@@ -86,6 +87,7 @@ classdef route_planner
                 R = sqrt((x_mid - pt1(1))^2 + (y_mid - pt1(2))^2);
                 start_turn = pt1;
                 end_turn = pt2;
+                mid_pt = [x_mid; y_mid];
             end
         end%calc turn
 

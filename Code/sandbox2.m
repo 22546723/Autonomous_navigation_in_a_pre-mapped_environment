@@ -11,6 +11,3 @@
 % plot(x, yp, x, yn)
 % grid on
 
-theta = 0:(2*pi/10):2*pi;
-pnt1 = [-0.0316; 0.0949];
-pnt2 = []
