@@ -1,8 +1,8 @@
-map =  load('/home/22546723/Documents/MATLAB/Skripsie/Code/maps/weighted_graph_test/map.mat');
+map =  load('Maps/path_segment_test.mat');
 map = map.map_data;
 
 planner = route_planner(map);
-[path, distance, edgepath]  = plot_route(planner, 1, 3);
+[path, distance, edgepath]  = plot_route(planner, 1, 5);
 ref_signal = convert_to_ref(planner, path);
 
 nodes = map.nodes;
@@ -11,6 +11,7 @@ len = length(nodes);
 tiledlayout(2, 2);
 
 %%%%%%%%%%%%%%%
+%plot weighted graph
 nexttile
 G = map.weighted_graph;
 p = plot(G, 'EdgeLabel', G.Edges.Weight);
@@ -18,13 +19,26 @@ highlight(p, 'Edges', edgepath)
 title("Weighted graph")
 
 %%%%%%%%%%%%%%%%%%
+%plot reference signal
 nexttile
-plot(ref_signal(1, :), ref_signal(2, :))
+ref_len = length(ref_signal)+1;
+xr = zeros(ref_len, 1, 1, "double");
+yr = zeros(ref_len, 1, 1, "double");
+
+for n=1:ref_len-1
+    xr(n) = ref_signal{n}.start(1);
+    yr(n) = ref_signal{n}.start(2);
+
+    xr(n+1) = ref_signal{n}.stop(1);
+    yr(n+1) = ref_signal{n}.stop(2);
+end
+
+plot(xr, yr)
 title("Route")
 xlabel("X");
 ylabel("Y");
 %%%%%%%%%%%%%%%%%%
-
+%plot node coordinates
 id = zeros(len, 1, 1, "double");
 x = zeros(len, 1, 1, "double");
 y = zeros(len, 1, 1, "double");
