@@ -1,3 +1,5 @@
+% Determines the camera intrinsics
+
 downloadURL  = "https://github.com/AprilRobotics/apriltag-imgs/archive/master.zip";
 dataFolder   = fullfile(tempdir,"apriltag-imgs",filesep); 
 options      = weboptions('Timeout', Inf);

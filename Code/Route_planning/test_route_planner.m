@@ -1,3 +1,5 @@
+% Runs route_planner.m and displays the results
+
 map =  load('Maps/path_segment_test.mat');
 map = map.map_data;
 

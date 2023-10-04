@@ -1,18 +1,69 @@
 classdef route_planner
+    % route_planner     plots a route and reference signal for a given map
+    %
+    % route_planner Properties:
+    %   map - Map object
+    %   See also map
+    %
+    % route_planner Methods:
+    %   route_planner - class initialisation
+    %   plot_route - determines the shortest node path between two nodes
+    %   convert_to_ref - converts a node path to a reference signal that
+    %                    can be used for control
+    %
+    % route_planner Methods(private):
+    %   calc_turn - calculates the turning details for three connected
+    %               nodes
+    %   get_perp_line - calculates the slope and offset of a line
+    %                   perpindicular to the given line
+    %   calc_point - calculates a point on a line that is a distance
+    %                from the end of the line
+
     properties
         map;
     end %properties
     methods
         function obj = route_planner(map)
+            % route_planner     initialise route_planner class
+            % Inputs:
+            %   map : map object
+            %         See also map
+            % Outputs:
+            %   obj : route_planner object
+
             obj.map = map;
         end %route_planner
 
-        function [path, distance, edgepath]  = plot_route(obj, s_node, t_node)
+        function [path, distance]  = plot_route(obj, s_node, t_node)
+            % plot_route    determines the shortest node path between two nodes
+            % Inputs:
+            %   s_node  : starting node
+            %             See also node
+            %   t_node  : target node
+            %             See also node
+            % Outputs:
+            %   path        : array of node IDs on the shortest path
+            %   distance    : total length of the shortest path
+
             graph = obj.map.weighted_graph;
-            [path, distance, edgepath] = shortestpath(graph, s_node, t_node);
+            [path, distance] = shortestpath(graph, s_node, t_node);
         end %plot_route
 
         function ref_signal = convert_to_ref(obj, path)
+            % convert_to_ref    converts a node path to a reference signal 
+            %                   that can be used for control
+            %
+            % This function uses the coordinates of the nodes on a path and
+            % the minimum turn radius of the vehicle to determine a
+            % reference signal that can be used by a control system
+            %
+            % Inputs: 
+            %   path        : array of node IDs on the shortest path
+            % Outputs:
+            %   ref_signal  : cell array of path_segments that describes 
+            %                 the plotted route
+            %                 See also path_segment
+
             nodes = obj.map.nodes;
             path_len = length(path);
 
@@ -52,8 +103,28 @@ classdef route_planner
 
     methods (Access = private)
         function [start_turn, end_turn, R, mid_pt] = calc_turn(obj, A, B, C)
-            R_min = 0.1; %m
+            % calc_turn     calculated the start, end and radius of the
+            % turn required for three connected nodes
+            %
+            % NOTE: The nodes MUST be connected in the following way:
+            %   A-B-C
+            % otherwise the function WILL NOT WORK
+            %
+            % Inputs:
+            %   A   : [x; y] coordinates of the starting node
+            %   B   : [x; y] coordinates of the middle node
+            %   C   : [x; y] coordinates of the ending node
+            % Outputs:
+            %   start_turn  : [x; y] coordinates of the start of the turn
+            %   end_turn    : [x; y] coordinates of the end of the turn
+            %   R           : radius of the turn
+            %   mid_pt      : [x; y] coordinates of the centre of the
+            %                 circle that describes the turn. NOTE: used 
+            %                 only for display
 
+            R_min = 0.1; % minimum turn radius
+
+            % get slopes
             if B(1)==A(1)
                 m1 = B(2) - A(2);
             else
@@ -66,24 +137,30 @@ classdef route_planner
                 m2 = (C(2) - B(2))/(C(1) - B(1));
             end
 
+            % calculate
             if m1==m2
                 R = 0; %straight line
                 start_turn = A;
                 end_turn = C;
                 mid_pt = B;
             else
+                % get offsets
                 c1 = B(2) - m1*B(1);
                 c2 = B(2) - m2*B(1);
 
+                % calculate a point R away from B on both lines
                 pt1 = calc_point(obj, A, B, m1, c1, R_min);
                 pt2 = calc_point(obj, C, B, m2, c2, R_min);
 
+                % calculate perpindicular lines going through these points
                 [m1p, c1p] = get_perp_line(obj, pt1, m1);
                 [m2p, c2p] = get_perp_line(obj, pt2, m2);
 
+                % where the perpindicular lines meet
                 x_mid = (c2p - c1p)/(m1p - m2p);
                 y_mid = m1p*x_mid + c1p;
 
+                % get radius & set outputs
                 R = sqrt((x_mid - pt1(1))^2 + (y_mid - pt1(2))^2);
                 start_turn = pt1;
                 end_turn = pt2;
@@ -92,6 +169,18 @@ classdef route_planner
         end%calc turn
 
         function [m, c] = get_perp_line(obj, point, m_old)
+            % get_perp_line     calculate the slope & offset of a
+            % perpindicular line going through a point
+            %
+            % Inputs:
+            %   point   : [x; y] coordinates of a point on the original 
+            %             line that the perpindicular line needs to pass 
+            %             through
+            %   m_old   : slope of the original line
+            % Outputs:
+            %   m   : slope of the perpindicular line
+            %   c   : offset of the perpindicular line
+         
             if m_old==0
                 m = 0;
             else
@@ -101,6 +190,20 @@ classdef route_planner
         end %perp line 
 
         function point = calc_point(obj, start, stop, m, c, d)
+            % calc_point    calculates a point on a line that is a distance
+            %               from the end of the line
+            % Inputs:
+            %   start   : [x; y] coordinates of the start of the line
+            %   stop    : [x; y] coordinates of the end of the line
+            %   m       : slope of the line
+            %   c       : line offset
+            %   d       : distance from the end of the line
+            % Outputs:
+            %   point   : [x; y] coordinates of the calculated point on the 
+            %             line
+
+
+            % calculate the 2 points on the line d away from stop
             x1 = stop(1) - d/sqrt(1+m^2);
             y1 = m*x1 + c;
             d1 = sqrt((x1 - start(1))^2 + (y1 - start(2))^2);
@@ -109,6 +212,8 @@ classdef route_planner
             y2 = m*x2 + c;
             d2 = sqrt((x2 - start(1))^2 + (y2 - start(2))^2);
 
+            % the distance from start to point cannot be greater than the
+            % distance from start to stop
             d_base = sqrt((start(1) - stop(1))^2 + (start(2) - stop(2))^2);
 
             if (d1 <= d_base)
