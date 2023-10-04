@@ -1,5 +1,6 @@
 classdef node
     % node    Node object
+    %
     % node Properties:
     %   id - node ID
     %   x_coord - x coordinate 

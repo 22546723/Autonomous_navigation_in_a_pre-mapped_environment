@@ -1,5 +1,6 @@
 classdef marker
     % marker    Marker object
+    %
     % marker Properties:
     %   id - marker ID
     %   x_coord - x coordinate 
