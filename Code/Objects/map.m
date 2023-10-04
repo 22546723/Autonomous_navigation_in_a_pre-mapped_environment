@@ -8,30 +8,49 @@ classdef map
     % map Methods:
     %   map - class intitialisation 
     properties
-        weighted_graph;
+        % weighted_graph - Weighted graph of the nodes in the environment
+        % See also graph
+        weighted_graph;   
+
+        % nodes - cell array of nodes in environment
+        % See also node
         nodes;
+
+        % markers - cell array of markers in environment
+        % See also marker
         markers;
     end %properties
     methods
-        function obj = map(coord_data, graph_data, marker_data)
+        function obj = map(node_data, graph_data, marker_data)
             % map   Initialise the map class
-            % 
+            % Inputs:
+            %   node_data   : array containing the ID and coordinates of 
+            %                 all nodes in the environment, sorted by ID - 
+            %                 [node id; x coordinate; y coordinate]
+            %   graph_data  : array containing the start and target node
+            %                 IDs for each branch on the weighted graph -
+            %                 [start node ID; target node ID]
+            %   marker_data : array containing the marker ID, coordinates
+            %                 and angle of each marker in the environment 
+            %                 - [marker ID; x coordinate; y coordinate; 
+            %                 angle];
+            % Outputs:
+            %   obj : map object
 
             %generate node objects
-            num_nodes = length(coord_data);
+            num_nodes = length(node_data);
             obj.nodes = cell(num_nodes, 1);
 
             for n=1:num_nodes
-                id = coord_data(1, n);
-                x = coord_data(2, n);
-                y = coord_data(3, n);
+                id = node_data(1, n);
+                x = node_data(2, n);
+                y = node_data(3, n);
                 obj.nodes{n} = node(id, x, y);
             end %for  
 
             %setup the weighted graph
             s = graph_data(1, :);
             t = graph_data(2, :);
-            %weights = graph_data(3, :);
             num_w = length(s);
             weights = zeros(1, num_w, 1, "double");
 

@@ -6,7 +6,7 @@ nodes = [1 2 3 4 5];
 x_coords = [0 1 -1 0 1];
 y_coords = [3 4 1 0 0];
 
-coord_data = [nodes; x_coords; y_coords];
+node_data = [nodes; x_coords; y_coords];
 
 %weighted graph
 s = [1 1 1 2 2 3 4];
@@ -31,5 +31,5 @@ marker_data = [markers; x_coords; y_coords; angles];
 %save(folder_name + 'marker_coords', 'marker_data')
 
 %map
-map_data = map(coord_data, graph_data, marker_data);
+map_data = map(node_data, graph_data, marker_data);
 save(file_name, 'map_data')
