@@ -1,4 +1,22 @@
 classdef pose_estimator
+    % pose_estimator    estimates the car pose using control instructions
+    %                   and markers
+    % pose_estimator Properties:
+    %   map - map object
+    %   cam_intrinsics - camera intrinsics
+    %   tag_size - size of the tags in meter            
+    %   tag_family - AprilTag family
+    %
+    % See also map, cameraParameters/Intrinsics, camera_calibration
+    %
+    % pose_estimator Methods:
+    %   pose_estimator - class initialisation
+    %   find_markers - identify all markers in a frame
+    %   pose_from_marker - estimate the pose using marker data
+    %   pose_from_control - estimate pose using control instructions
+    %   get_current_pose - estimate the current pose using the marker and
+    %                      control pose estimations
+
     properties
         map;
         cam_intrinsics;
@@ -8,6 +26,17 @@ classdef pose_estimator
 
     methods
         function obj = pose_estimator(map, intrinsics, tag_size, tag_family)
+            % pose_estimator    initialise pose_estimator class
+            % Inputs:
+            %   map : map object
+            %   intrinsics  : camera intrinsics
+            %   tag_size    : tag size in meter
+            %   tag_family  : AprilTag family
+            % See also map, cameraParameters/Intrinsics
+            %
+            % Outputs:
+            %   obj : pose_estimator object
+
             obj.map = map;
             obj.cam_intrinsics = intrinsics;
             obj.tag_family = tag_family;
@@ -15,11 +44,29 @@ classdef pose_estimator
         end
 
         function [id, loc, pose] = find_markers(obj, frame)
+            % find_markers  finds all markers in a frame
+            % Inputs:
+            %   frame   : 3D image array from the camera 
+            % Outputs:
+            %   id  : array of marker IDs
+            %   loc : array of marker corner coordinates (image
+            %         coordinates) for each marker
+            %   pose    : marker poses as an array of rigidtform3d objects
+            % See also rigidtform3d, readAprilTag
             frame = undistortImage(frame, intrinsics, OutputView="same");
             [id, loc, pose] = readAprilTag(frame, obj.tag_family, intrinsics, obj.tag_size);
         end
 
         function marker_pos = pose_from_marker(id, loc, pose)
+            % pose_from_marker  estimate the pose using marker data
+            % Inputs:
+            %   id - array of marker IDs
+            %   loc - image coordinates of tag corners
+            %   pose - marker poses as an array of rigidtform3d objects
+            % Outputs:
+            %   marker_pos - [x_coord; y_coord; angle] of the car based on 
+            %                the marker poses
+
             %temp
             x_coord = 0;
             y_coord = 0;
@@ -82,14 +129,31 @@ classdef pose_estimator
 
 %TODO: write pose_from_control function        
         function control_pos = pose_from_control(control_instructions, prev_pos)
+            % pose_from_control     estimate pose using control instructions
+            % Inputs:
+            %   TODO
+            % Outputs:
+            %   TODO
+
             control_pos = prev_pos + control_instructions;
         end %pose from control
 
-        function current_pos = get_current_pos(obj, marker_pos, control_pos)
+        function current_pose = get_current_pose(obj, marker_pos, control_pos)
+            % get_current_pos   estimate the current pose using marker and
+            %                   control estimations
+            %
+            % marker pose takes priority
+            %
+            % Inputs:
+            %   marker_pos  : pose from marker estimation
+            %   control_pos : pose from control estimation
+            % Outputs:
+            %   current_pose    : current pose
+            
             if ~isempty(marker_pos)
-                current_pos = marker_pos;
+                current_pose = marker_pos;
             else
-                current_pos = control_pos;
+                current_pose = control_pos;
             end %if else
         end %get current pos
 
