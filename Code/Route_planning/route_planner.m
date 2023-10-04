@@ -92,9 +92,9 @@ classdef route_planner
                 [start_turn, end_turn, R, mid_pt] = calc_turn(obj, A, B, C);                
 
                 %break into segments
-                ref_signal{n} = path_segment(A, start_turn, 0, 0);
+                ref_signal{n} = path_segment(A, start_turn, 0, [0; 0]);
                 ref_signal{n+1} = path_segment(start_turn, end_turn, R, mid_pt);
-                ref_signal{n+2} = path_segment(end_turn, C, 0, 0);
+                ref_signal{n+2} = path_segment(end_turn, C, 0, [0; 0]);
             end %for
 
         end %convert
@@ -126,23 +126,50 @@ classdef route_planner
 
             % get slopes
             if B(1)==A(1)
-                m1 = B(2) - A(2);
+                m1 = 0;
             else
                 m1 = (B(2) - A(2))/(B(1) - A(1));
             end
 
             if B(1)==C(1)
-                m2 = C(2) - B(2);
+                m2 = 0;
             else
                 m2 = (C(2) - B(2))/(C(1) - B(1));
             end
 
-            % calculate
             if m1==m2
-                R = 0; %straight line
-                start_turn = A;
-                end_turn = C;
-                mid_pt = B;
+                if (A(1)==B(1))&&(B(2)==C(2)) % A-B vertical; B-C horizontal
+                    c1 = B(1);
+                    c2 = B(2);
+                    pt1 = c2 + (abs(A(2)-B(2))/A(2)-B(2))*R_min;
+                    pt2 = c1 + (abs(C(1)-B(1))/C(1)-B(1))*R_min;
+                    x_mid = pt2;
+                    y_mid = pt1;
+
+                    % get radius & set outputs
+                    R = R_min;
+                    start_turn = [B(1); pt1];
+                    end_turn = [pt2; B(2)];
+                    mid_pt = [x_mid; y_mid];
+                elseif ((A(2)==B(2))&&(B(1)==C(1))) % A-B horizontal; B-C vertical
+                    c1 = B(2);
+                    c2 = B(1);
+                    pt1 = c2 + (abs(A(1)-B(1))/A(1)-B(1))*R_min;
+                    pt2 = c1 + (abs(C(2)-B(2))/C(2)-B(2))*R_min;
+                    x_mid = pt1;
+                    y_mid = pt2;
+
+                    % get radius & set outputs
+                    R = R_min;
+                    start_turn = [pt1; B(2)];
+                    end_turn = [B(1); pt2];
+                    mid_pt = [x_mid; y_mid];
+                else %straight line
+                    R = 0; 
+                    start_turn = A;
+                    end_turn = C;
+                    mid_pt = [0; 0];
+                end
             else
                 % get offsets
                 c1 = B(2) - m1*B(1);
@@ -165,6 +192,23 @@ classdef route_planner
                 start_turn = pt1;
                 end_turn = pt2;
                 mid_pt = [x_mid; y_mid];
+
+                % %test
+                % xt = 0:0.1:1;
+                % y1 = m1*xt+c1;
+                % y2 = m2*xt+c2;
+                % y1p = m1p*xt+c1p;
+                % y2p = m2p*xt+c2p;
+                % 
+                % plot(xt, y1, xt, y1p)
+                % legend('y1', 'y1p')
+
+                % hold on
+                % plot(xt, y1, xt, y2)                
+                % plot(xt, y1p, xt, y2p)
+                % plot(x_mid, y_mid, 'o')
+                % legend('y1', 'y2', 'y1p', 'y2p', 'middle')
+                % hold off
             end
         end%calc turn
 

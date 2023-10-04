@@ -4,7 +4,7 @@ map =  load('Maps/path_segment_test.mat');
 map = map.map_data;
 
 planner = route_planner(map);
-[path, distance, edgepath]  = plot_route(planner, 1, 5);
+[path, distance]  = plot_route(planner, 2, 3);
 ref_signal = convert_to_ref(planner, path);
 
 nodes = map.nodes;
@@ -17,7 +17,7 @@ tiledlayout(2, 2);
 nexttile
 G = map.weighted_graph;
 p = plot(G, 'EdgeLabel', G.Edges.Weight);
-highlight(p, 'Edges', edgepath)
+highlight(p, path, 'EdgeColor', 'red')
 title("Weighted graph")
 
 %%%%%%%%%%%%%%%%%%
@@ -37,16 +37,30 @@ for n=1:ref_len-1
 
     %plot curves
     R = ref_signal{n}.R;
-    pnt = ref_signal{n}.mid_point;
-    xm = pnt(1)-R:0.2:pnt(1)+R;
+    if ~(R==0)
+        pnt = ref_signal{n}.mid_point;
+        interval = abs(xr(n+1)-xr(n))/5;
+        x_max = max(xr(n), xr(n+1));
+        x_min = min(xr(n), xr(n+1));
+        xm = x_min:interval:x_max;
 
-    dx = xm-pnt(1);
-    theta = acos(dx/R);
-    ym = R*sin(theta);
-    yp = pnt(2) + abs(ym);
-    yn = pnt(2) - abs(ym);
+        dx = xm-pnt(1);
+        theta = acos(dx/R);
+        ym = R*sin(theta);
+        yp = pnt(2) + abs(ym);
+        yn = pnt(2) - abs(ym);
 
-    plot(xm, yp, xm, yn)
+        pos_match1 = (yp(1)==yr(n)) && (yp(length(yp))==yr(n+1));
+        pos_match2 = (yp(1)==yr(n+1)) && (yp(length(yp))==yr(n));
+        pos_match = pos_match1 || pos_match2;
+
+        if pos_match==1
+            plot(xm, yp)
+        else
+            plot(xm, yn)
+        end
+    end
+
 end
 
 plot(xr, yr)
