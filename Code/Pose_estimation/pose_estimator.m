@@ -27,23 +27,21 @@ classdef pose_estimator
     end
 
     methods
-        function obj = pose_estimator(map, intrinsics, tag_size, tag_family, start_pose)
+        function obj = pose_estimator(map, start_pose)
             % pose_estimator    initialise pose_estimator class
             % Inputs:
             %   map : map object
-            %   intrinsics  : camera intrinsics
-            %   tag_size    : tag size in meter
-            %   tag_family  : AprilTag family
             %   start_pose  : starting pose on the map - [x; y; angle]
-            % See also map, cameraParameters/Intrinsics
+            % See also map
             %
             % Outputs:
             %   obj : pose_estimator object
 
             obj.map = map;
-            obj.cam_intrinsics = intrinsics;
-            obj.tag_family = tag_family;
-            obj.tag_size = tag_size;
+            obj.cam_intrinsics = load('calibration/camera_params.mat');
+            obj.cam_intrinsics = obj.cam_intrinsics.params.Intrinsics;
+            obj.tag_family = "tag36h11";
+            obj.tag_size = 70*10^(-3); % 70mm
             obj.current_pose = start_pose;
         end
 
@@ -148,8 +146,8 @@ classdef pose_estimator
             control_pos = [x; y; angle];
         end %pose from control
 
-        function current_pose = get_current_pose(obj, marker_pos, control_pos)
-            % get_current_pos   estimate the current pose using marker and
+        function obj = update_pose(obj, marker_pos, gotMarker, control_pos)
+            % update_pose   update the current pose using marker and
             %                   control estimations
             %
             % marker pose takes priority
@@ -158,13 +156,24 @@ classdef pose_estimator
             %   marker_pos  : pose from marker estimation
             %   control_pos : pose from control estimation
             % Outputs:
+            %   obj    : updated object with the new current_pose
+            
+            if gotMarker==1
+                obj.current_pose = marker_pos;
+            else
+                obj.current_pose = control_pos;
+            end %if else
+        end
+        
+        function current_pose = get_current_pose(obj)
+            % get_current_pose   return the current pose property
+            %
+            % marker pose takes priority
+            %
+            % Outputs:
             %   current_pose    : current pose
             
-            if ~isempty(marker_pos)
-                current_pose = marker_pos;
-            else
-                current_pose = control_pos;
-            end %if else
+            current_pose = obj.current_pose;
         end %get current pos
 
 %         function output = estimate(obj, frame)
