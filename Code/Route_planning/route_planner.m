@@ -78,8 +78,9 @@ classdef route_planner
 
             %break coords into line segments
             ref_signal = cell(1, path_len); %array of path segments
+            
             if path_len==2
-                ref_signal{1} = path_segment(coords(:, 1), coords(:, 2), 0);
+                ref_signal{1} = path_segment(coords(:, 1), coords(:, 2), 0, [0; 0]);
             end
 
             for n = 1:(path_len - 2)
