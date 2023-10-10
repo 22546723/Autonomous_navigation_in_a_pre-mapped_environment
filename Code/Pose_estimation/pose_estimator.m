@@ -6,6 +6,7 @@ classdef pose_estimator
     %   cam_intrinsics - camera intrinsics
     %   tag_size - size of the tags in meter            
     %   tag_family - AprilTag family
+    %   current_pose - current estimated pose - [x; y; angle]
     %
     % See also map, cameraParameters/Intrinsics, camera_calibration
     %
@@ -21,17 +22,19 @@ classdef pose_estimator
         map;
         cam_intrinsics;
         tag_size;
-        tag_family;    
+        tag_family;  
+        current_pose;
     end
 
     methods
-        function obj = pose_estimator(map, intrinsics, tag_size, tag_family)
+        function obj = pose_estimator(map, intrinsics, tag_size, tag_family, start_pose)
             % pose_estimator    initialise pose_estimator class
             % Inputs:
             %   map : map object
             %   intrinsics  : camera intrinsics
             %   tag_size    : tag size in meter
             %   tag_family  : AprilTag family
+            %   start_pose  : starting pose on the map - [x; y; angle]
             % See also map, cameraParameters/Intrinsics
             %
             % Outputs:
@@ -41,6 +44,7 @@ classdef pose_estimator
             obj.cam_intrinsics = intrinsics;
             obj.tag_family = tag_family;
             obj.tag_size = tag_size;
+            obj.current_pose = start_pose;
         end
 
         function [id, loc, pose] = find_markers(obj, frame)
@@ -127,17 +131,22 @@ classdef pose_estimator
 
         end %pose from marker
 
-%TODO: write pose_from_control function        
-        % function control_pos = pose_from_control(obj, wl, wr)
-        %     % pose_from_control     estimate pose using control instructions
-        %     % Inputs:
-        %     %   TODO
-        %     % Outputs:
-        %     %   TODO
-        % 
-        % 
-        %     control_pos = prev_pos + control_instructions;
-        % end %pose from control
+        function control_pos = pose_from_control(obj, diff_x, diff_y, diff_angle)
+            % pose_from_control     estimate pose using control instructions
+            % Inputs:
+            %   diff_x      : change in x direction
+            %   diff_y      : change in y direction
+            %   diff_angle  : change in angle
+            % Outputs:
+            %   control_pos : [x coord; y coord; angle] of the car
+            %                   estimated from the control instructions
+
+            x = obj.current_pose(1) + diff_x;
+            y = obj.current_pose(2) + diff_y;
+            angle = obj.current_pose(3) + diff_angle;
+
+            control_pos = [x; y; angle];
+        end %pose from control
 
         function current_pose = get_current_pose(obj, marker_pos, control_pos)
             % get_current_pos   estimate the current pose using marker and
