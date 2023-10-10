@@ -37,10 +37,8 @@ classdef route_planner
         function [path, distance]  = plot_route(obj, s_node, t_node)
             % plot_route    determines the shortest node path between two nodes
             % Inputs:
-            %   s_node  : starting node
-            %             See also node
-            %   t_node  : target node
-            %             See also node
+            %   s_node  : starting node id
+            %   t_node  : target node id
             % Outputs:
             %   path        : array of node IDs on the shortest path
             %   distance    : total length of the shortest path
