@@ -128,15 +128,16 @@ classdef pose_estimator
         end %pose from marker
 
 %TODO: write pose_from_control function        
-        function control_pos = pose_from_control(control_instructions, prev_pos)
-            % pose_from_control     estimate pose using control instructions
-            % Inputs:
-            %   TODO
-            % Outputs:
-            %   TODO
-
-            control_pos = prev_pos + control_instructions;
-        end %pose from control
+        % function control_pos = pose_from_control(obj, wl, wr)
+        %     % pose_from_control     estimate pose using control instructions
+        %     % Inputs:
+        %     %   TODO
+        %     % Outputs:
+        %     %   TODO
+        % 
+        % 
+        %     control_pos = prev_pos + control_instructions;
+        % end %pose from control
 
         function current_pose = get_current_pose(obj, marker_pos, control_pos)
             % get_current_pos   estimate the current pose using marker and
