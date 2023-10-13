@@ -45,7 +45,7 @@ classdef pose_estimator
             obj.current_pose = start_pose;
         end
 
-        function [id, loc, pose] = find_markers(obj, frame)
+        function [id, loc, pose, gotMarker] = find_markers(obj, frame)
             % find_markers  finds all markers in a frame
             % Inputs:
             %   frame   : 3D image array from the camera 
@@ -57,6 +57,12 @@ classdef pose_estimator
             % See also rigidtform3d, readAprilTag
             frame = undistortImage(frame, intrinsics, OutputView="same");
             [id, loc, pose] = readAprilTag(frame, obj.tag_family, intrinsics, obj.tag_size);
+
+            if isempty(loc)
+                gotMarker = 0;
+            else
+                gotMarker = 1;
+            end
         end
 
         function marker_pos = pose_from_marker(id, loc, pose)
