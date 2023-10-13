@@ -1,10 +1,10 @@
 % Runs route_planner.m and displays the results
 
-map =  load('Maps/path_segment_test.mat');
+map =  load('Maps/straight_line_test.mat');
 map = map.map_data;
 
 planner = route_planner(map);
-[path, distance]  = plot_route(planner, 1, 5);
+[path, distance]  = plot_route(planner, 1, 3);
 ref_signal = convert_to_ref(planner, path);
 
 nodes = map.nodes;
@@ -54,7 +54,18 @@ for n=1:ref_len-1
         pos_match2 = (yp(1)==yr(n+1)) && (yp(length(yp))==yr(n));
         pos_match = pos_match1 || pos_match2;
 
-        if pos_match==1
+        diff_p_max = max([yp(1) yp(length(yp))]) - max([yr(n) yr(n+1)]);
+        diff_p_min = min([yp(1) yp(length(yp))]) - min([yr(n) yr(n+1)]);
+        diff_p = abs(diff_p_min) + abs(diff_p_max);
+
+        diff_n_max = max([yn(1) yn(length(yn))]) - max([yr(n) yr(n+1)]);
+        diff_n_min = min([yn(1) yn(length(yn))]) - min([yr(n) yr(n+1)]);
+        diff_n = abs(diff_n_min) + abs(diff_n_max);
+
+        % plot(xm, yp)
+        % plot(xm, yn)
+
+        if diff_p < diff_n
             plot(xm, yp)
         else
             plot(xm, yn)

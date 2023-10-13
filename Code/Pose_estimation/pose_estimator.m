@@ -38,8 +38,17 @@ classdef pose_estimator
             %   obj : pose_estimator object
 
             obj.map = map;
-            obj.cam_intrinsics = load('calibration/camera_params.mat');
-            obj.cam_intrinsics = obj.cam_intrinsics.params.Intrinsics;
+            focalLength = [4.260104110385426e+02,4.572738582555217e+02];
+            principalPoint = [4.912992236555515e+02,3.012009299604217e+02];
+            imageSize = [600,1200];
+            radialDistortion = [0.009100768838994,-0.014302243268843];
+            K = [4.260104110385426e+02,0,4.912992236555515e+02;0, ... 
+                4.572738582555217e+02,3.012009299604217e+02;0,0,1];
+
+            obj.cam_intrinsics = cameraIntrinsics(focalLength, ...
+                principalPoint, imageSize, 'RadialDistortion', ...
+                radialDistortion); %, "K", K);
+
             obj.tag_family = "tag36h11";
             obj.tag_size = 70*10^(-3); % 70mm
             obj.current_pose = start_pose;

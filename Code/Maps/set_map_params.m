@@ -1,7 +1,7 @@
-% Generates map objects
+% Generates map parameters
 
 %file
-file_name = "Maps/straight_line_test";
+file_name = "Maps/straight_line_test_setup";
 
 %nodes
 nodes = [1 2 3];
@@ -23,7 +23,4 @@ y_coords = [0 4 2];
 angles = [0 0 0];
 
 marker_data = [markers; x_coords; y_coords; angles];
-
-%map
-map_data = map(node_data, graph_data, marker_data);
-save(file_name, 'map_data')
+save(file_name, "node_data", "graph_data", "marker_data")
