@@ -149,7 +149,7 @@ classdef pose_estimator
             % Inputs:
             %   diff_x      : change in x direction
             %   diff_y      : change in y direction
-            %   diff_angle  : change in angle
+            %   new_angle  : new angle
             % Outputs:
             %   control_pos : [x coord; y coord; angle] of the car
             %                   estimated from the control instructions
