@@ -98,6 +98,57 @@ classdef route_planner
 
         end %convert
 
+        function ref_signal = convert_to_ref_array(obj, path)
+            % convert_to_ref    converts a node path to a reference signal 
+            %                   that can be used for control
+            %
+            % This function uses the coordinates of the nodes on a path and
+            % the minimum turn radius of the vehicle to determine a
+            % reference signal that can be used by a control system
+            %
+            % Inputs: 
+            %   path        : array of node IDs on the shortest path
+            % Outputs:
+            %   ref_signal  : array [x_start; y_start; x_stop; y_stop; R] that describes 
+            %                 the plotted route
+
+            nodes = obj.map.nodes;
+            path_len = length(path);
+
+            coords = zeros(2, path_len, 1, "double"); %x-y coordinates
+
+            for n = 1:path_len
+                id = path(n);
+                node = nodes{id};
+                x = node.x_coord;
+                y = node.y_coord;
+                coords(1, n) = x;
+                coords(2, n) = y;
+            end %for
+
+            %break coords into line segments
+            
+            if path_len==2
+                ref_signal = [coords(:, 1); coords(:, 2); 0]; %[coords(1,1); coords(2,1); coords(1,2); coords(2,2); 0]; %path_segment(coords(:, 1), coords(:, 2), 0, [0; 0]);
+            else
+                ref_signal = zeros(5, path_len, 1, "double"); %[x_start; y_start; x_stop; y_stop; R]
+
+                for n = 1:(path_len - 2)
+                    A = coords(:, n);
+                    B = coords(:, n+1);
+                    C = coords(:, n+2);
+
+                    [start_turn, end_turn, R, ~] = calc_turn(obj, A, B, C);
+
+                    %break into segments
+                    ref_signal(:,n) = [A; start_turn; 0];
+                    ref_signal(:,n+1) = [start_turn; end_turn; R];
+                    ref_signal(:,n+2) = [end_turn; C; 0];
+                end %for
+            end %if
+
+        end %convert
+
     end %methods
 
     methods (Access = private)
@@ -262,7 +313,7 @@ classdef route_planner
             if (d1 <= d_base)
                 point = [x1; y1];
             elseif (d2 <= d_base)
-                point = [x2, y2];
+                point = [x2; y2];
             else
                 point = [0; 0];
             end
