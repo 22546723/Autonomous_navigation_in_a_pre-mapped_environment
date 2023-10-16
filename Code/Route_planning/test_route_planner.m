@@ -79,6 +79,7 @@ hold off
 title("Route")
 xlabel("X");
 ylabel("Y");
+grid on
 %%%%%%%%%%%%%%%%%%
 %plot node coordinates
 id = zeros(len, 1, 1, "double");

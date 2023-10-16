@@ -172,7 +172,7 @@ classdef route_planner
             %                 circle that describes the turn. NOTE: used 
             %                 only for display
 
-            R_min = 0.1; % minimum turn radius
+            R_min = 0.5; % minimum turn radius
 
             % get slopes
             if B(1)==A(1)
@@ -242,6 +242,15 @@ classdef route_planner
                 start_turn = pt1;
                 end_turn = pt2;
                 mid_pt = [x_mid; y_mid];
+
+
+                x1 = B(1) - A(1);
+                y1 = B(2) - A(2);
+                x2 = C(1) - B(1);
+                y2 = C(2) - B(2);
+                angle = atan2d(x1*y2-y1*x2, x1*x2+y1*y2);
+                R = (angle/abs(angle))*R;
+
 
                 % %test
                 % xt = 0:0.1:1;
