@@ -1,3 +1,5 @@
+% Determines the camera intrinsics
+
 downloadURL  = "https://github.com/AprilRobotics/apriltag-imgs/archive/master.zip";
 dataFolder   = fullfile(tempdir,"apriltag-imgs",filesep); 
 options      = weboptions('Timeout', Inf);
@@ -38,9 +40,6 @@ tagLocs = reshape(permute(tagLocs,[1,3,2]),[],2);
 checkerIdx = helperAprilTagToCheckerLocations(tagArrangement);
 imagePoints = tagLocs(checkerIdx(:),:);
 
-% Display corner locations.
-figure; imshow(calibPattern); hold on
-plot(imagePoints(:,1),imagePoints(:,2),"ro-",MarkerSize=15);
 
 % Create an imageDatastore object to store the captured images.
 imdsCalib = imageDatastore("calib_images/");
