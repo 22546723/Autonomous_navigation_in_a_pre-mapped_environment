@@ -1,3 +1,3 @@
-size(out.joint_w)
-data = cell2mat(out.joint_w.Data);
-plot(data)
+s = tf('s');
+G_s = 0.01/s;
+sisotool('rlocus', G_s)
