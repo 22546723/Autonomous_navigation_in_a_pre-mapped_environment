@@ -1,5 +1,6 @@
-% speed = get(data, 1).Values.Data;
-% torque = get(data, 2).Values.Data;
+file = load("Results/movement_test_turn_left.mat");
+data = file.data;
+
 R_L = data.R_L;
 R_R = data.R_R;
 v_L = data.v_L;
