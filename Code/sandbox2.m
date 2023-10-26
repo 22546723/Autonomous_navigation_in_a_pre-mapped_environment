@@ -1,52 +1,29 @@
-% speed = get(data, 1).Values.Data;
-% torque = get(data, 2).Values.Data;
-R_L = data.R_L;
-R_R = data.R_R;
-v_L = data.v_L;
-v_R = data.v_R;
+torque = out.simout.torque.Data;
+w_L = out.simout.w_L_act.Data;
+w_R = out.simout.w_R_act.Data;
+v_L = out.simout.v_L.Data;
+v_R = out.simout.v_R.Data;
 
-tiledlayout(2, 2);
 
-nexttile
 hold on
-plot(R_L)
-plot(v_L)
+yyaxis left
+plot(torque(1:length(w_L)), w_L)
+plot(torque(1:length(w_R)), w_R)
+
+yyaxis right
+plot(torque(1:length(v_L)), v_L)
+plot(torque(1:length(v_R)), v_R)
+
 hold off
 grid on
-xlabel('Time (s)')
-ylabel('Speed (m/s)')
-legend('Reference speed', 'Actual speed')
-title('Left wheel')
 
-nexttile
-hold on
-plot(R_R)
-plot(v_R)
-hold off
-grid on
-xlabel('Time (s)')
-ylabel('Speed (m/s)')
-legend('Reference speed', 'Actual speed')
-title('Right wheel')
+yyaxis left
+ylabel("Wheel speed [rad/s]")
+legend("Left wheel", "Right wheel")
 
-nexttile
-hold on
-plot(R_L)
-plot(R_R)
-hold off
-grid on
-xlabel('Time (s)')
-ylabel('Speed (m/s)')
-legend('Left reference speed', 'Right reference speed')
-title('Reference speeds')
+yyaxis right
+ylabel("Wheel speed [m/s]")
+legend("Left wheel", "Right wheel")
 
-nexttile
-hold on
-plot(v_L)
-plot(v_R)
-hold off
-grid on
-xlabel('Time (s)')
-ylabel('Speed (m/s)')
-legend('Left wheel speed', 'Right wheel speed')
-title('Actual wheel speeds')
+xlabel("Torque [Nm]")
+title("Torque vs wheel speed")
