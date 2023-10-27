@@ -1,16 +1,22 @@
-ts = 0.1;
-zeta = 0.9;
+ts = 0.2;
+zeta = 0.7071;
 
 sigma = 4/ts
 
 wn = sigma/zeta
 
-wd = wn*sqrt(1-zeta^2)
+wd = wn*sqrt(1-zeta^2);
 
 
-s = -40 + 1i*19.37;
+s = -sigma + 1i*wd
+% 
+% G = 16/s
+% 
+% Kp = 1/abs(G)
 
-den_G = den(1)*s^2 + den(2)*s + den(3);
-G = 100/s
+G = s*(s+19.32+1i*9.36)*(s+19.32-1i*9.36);
+G = 461/G;
 
-Kd = 1/abs(G)
+D = (s+2.8)*(s-7.82)/s;
+
+Kd = 1/abs(D*G)
