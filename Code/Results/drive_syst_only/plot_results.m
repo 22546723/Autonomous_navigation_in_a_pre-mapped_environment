@@ -1,10 +1,10 @@
 data = load("Results//drive_syst_only/torque_control_results.mat");
 data = data.data;
 
-figure
-plot_speeds(data)
-
-figure
+% figure
+% plot_speeds(data)
+% 
+% figure
 plot_angles(data)
 
 function plot_speeds(data)
