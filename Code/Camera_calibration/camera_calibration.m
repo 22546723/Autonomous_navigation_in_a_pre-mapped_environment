@@ -43,7 +43,7 @@ imagePoints = tagLocs(checkerIdx(:, 1:5),:);
 
 
 % Create an imageDatastore object to store the captured images.
-imdsCalib = imageDatastore("frames/");
+imdsCalib = imageDatastore("Camera_calibration/frames/");
 %imgCalib = imread("Screenshot from calib.avi - 3.png");
 
 % Detect the calibration pattern from the images.

@@ -1,58 +1,59 @@
-% ts_des = 0.2;
-% zeta_des = 0.7071;
+cam_intrinsics = load('Camera_calibration/new_params.mat');
+intrinsics = cam_intrinsics.params.Intrinsics;
+
+data = load("marker_test.mat", "data");
+data = data.data;
+
+
+
+id = data.id;
+loc = data.loc;
+pose = data.pose;
+gotMarker = data.gotMarker;
+x = data.x;
+y = data.y;
+
+m_check = 0;
+t = 0;
+n = 1;
 % 
-% sigma_des = 4/ts_des
-% wn_des = sigma_des/zeta_des
-% wd_des = wn_des*sqrt(1-zeta_des^2);
-% s_des = -sigma_des + 1i*wd_des
-% % 
-% % G = 16/s
-% % 
-% % Kp = 1/abs(G)
+% while m_check==0
+%     if gotMarker.Data(n)==1
+%         m_check = 1;
+%         t = n;
+%     else
+%         n = n+1;
+%     end
+% end
+
+A = pose.Data(:, :, 36);
+img_coords = loc.Data(:, :, 36);
+tform = rigidtform3d(A);
+marker_coord = [-4 0.04];
+
+tag_size = 0.1;
+
+act_points = [x.Data(36), y.Data(36)]
 % 
-% G = s_des*(s_des+19.32+1i*9.36)*(s_des+19.32-1i*9.36);
-% G = 461/G;
+% ym = (min(img_coords(:, 2)) + max(img_coords(:, 2)))/2;
+% xm = (min(img_coords(:, 1)) + max(img_coords(:, 1)))/2;
 % 
-% D = (s_des+2.8)*(s_des-7.82)/s_des;
+% % u = ym;
+% % v = xm;
+% % w = 0;
+% coords = [1683.87145996094,	1557.64196777344;
+% 1593.36523437500,	1557.62780761719;
+% 1591.03442382813,	1573.48950195313;
+% 1685.92846679688,	1572.92797851563];
+
+temp = img2world2d(img_coords, tform, intrinsics);
+x_c = (min(temp(:, 1)) + max(temp(:, 1)))/2;
+y_c = (min(temp(:, 2)) + max(temp(:, 2)))/2;
+coords = [y_c, x_c]
+
+% meas_coords = A * [xm; ym; 0; 1]
 % 
-% Kd = 1/abs(D*G)
-
-
-sigma = 24.5:0.5:50.5;
-sigma = sigma.';
-len = length(sigma);
-
-%w = zeros(length(sigma), 1, 1);
-w = 40:0.5:66.5;
-w = w.';
-
-% a3 = zeros(length(sigma), 1, 1);
-% a4 = zeros(length(sigma), 1, 1);
-
-res = {'sigma', 'w', 'a3', 'a4', 'a'};
-
-for n=1:len %sigma
-
-    for k=1:len %w
-        a3 = 360 - atand((w(k) - 13.64)/(sigma(n) - 20));
-        a4 = atand((w(k) + 13.64)/(sigma(n) - 20));
-        a = a3+a4;
-
-        if (a>360)
-            a = a-360;
-        end
-
-        if (a<0)
-            a = a+360;
-        end
-
-        if ((a>=184.3)&&(a<=184.32)) || ((a>=4.3)&&(a<=4.32))
-            temp = {sigma(n), w(k), a3, a4, a};
-            res = [res; temp];
-        end
-    end
-
-end
-
-disp(res)
+% x_pos = marker_coord(1) + meas_coords(2);
+% y_pos = marker_coord(2) + meas_coords(1);
+% pos = [x_pos, y_pos]
 
