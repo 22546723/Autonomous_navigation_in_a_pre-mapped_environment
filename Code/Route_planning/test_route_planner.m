@@ -1,16 +1,22 @@
 % Runs route_planner.m and displays the results
+s_node = 1;
+t_node = 3;
 
-map =  load('Maps/straight_line_test.mat');
-map = map.map_data;
+%now gets set in route planner class
+% map =  load('Maps/straight_line_test.mat');
+% map = map.map_data;
 
-planner = route_planner(map);
-[path, distance]  = plot_route(planner, 1, 3);
+planner = route_planner();
+[path, distance]  = plot_route(planner, s_node, t_node);
 ref_signal = convert_to_ref(planner, path);
+%ref = get_ref_array(planner, s_node, t_node);
+
+map = planner.map;
 
 nodes = map.nodes;
 len = length(nodes);
 
-tiledlayout(2, 2);
+t = tiledlayout(2, 2);
 
 %%%%%%%%%%%%%%%
 %plot weighted graph
@@ -22,7 +28,7 @@ title("Weighted graph")
 
 %%%%%%%%%%%%%%%%%%
 %plot reference signal
-nexttile
+nexttile(2, [2 1])
 ref_len = length(ref_signal)+1;
 xr = zeros(ref_len, 1, 1, "double");
 yr = zeros(ref_len, 1, 1, "double");
@@ -37,6 +43,7 @@ for n=1:ref_len-1
 
     %plot curves
     R = ref_signal{n}.R;
+    
     if ~(R==0)
         pnt = ref_signal{n}.mid_point;
         interval = abs(xr(n+1)-xr(n))/5;
@@ -67,18 +74,22 @@ for n=1:ref_len-1
 
         if diff_p < diff_n
             plot(xm, yp)
+            %yc = yp;
         else
             plot(xm, yn)
+            %yc = yn;
         end
     end
 
 end
 
 plot(xr, yr)
+
 hold off
 title("Route")
-xlabel("X");
-ylabel("Y");
+xlabel("X [m]");
+ylabel("Y [m]");
+legend("Curved reference route", "Original reference route")
 grid on
 %%%%%%%%%%%%%%%%%%
 %plot node coordinates
@@ -102,6 +113,9 @@ for n=1:len
 end
 grid on
 title("Node coordinates")
-xlabel("X");
-ylabel("Y");
+xlabel("X [m]");
+ylabel("Y [m]");
 %%%%%%%%%%%%%%%%%%%%%%
+
+temp = "Plotted route from node "+s_node+" to node "+t_node;
+title(t, temp)
