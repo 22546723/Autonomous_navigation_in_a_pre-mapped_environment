@@ -31,7 +31,7 @@ classdef route_planner
             % Outputs:
             %   obj : route_planner object
 
-            map =  load('Maps/straight_line_test.mat');
+            map =  load('Maps/s_route_test.mat');
             obj.map = map.map_data;
         end %route_planner
 
@@ -81,23 +81,35 @@ classdef route_planner
             end %for
 
             %break coords into line segments
-            ref_signal = cell(1, path_len); %array of path segments
+            
             
             if path_len==2
-                ref_signal{1} = path_segment(coords(:, 1), coords(:, 2), 0, [0; 0]);
+                ref_signal = path_segment(coords(:, 1), coords(:, 2), 0, [0; 0]);
+            else
+                ref_signal = cell(1, (2*path_len-3)); %array of path segments
             end
 
+
+            seg_count = 1;
             for n = 1:(path_len - 2)
+                
                 A = coords(:, n);
                 B = coords(:, n+1);
                 C = coords(:, n+2);
 
                 [start_turn, end_turn, R, mid_pt] = calc_turn(obj, A, B, C);                
 
+                %seg_count = 2*n-1;
                 %break into segments
-                ref_signal{n} = path_segment(A, start_turn, 0, [0; 0]);
-                ref_signal{n+1} = path_segment(start_turn, end_turn, R, mid_pt);
-                ref_signal{n+2} = path_segment(end_turn, C, 0, [0; 0]);
+                ref_signal{seg_count} = path_segment(A, start_turn, 0, [0; 0]);
+                ref_signal{seg_count+1} = path_segment(start_turn, end_turn, R, mid_pt);
+                ref_signal{seg_count+2} = path_segment(end_turn, C, 0, [0; 0]);
+
+                if seg_count > 1
+                    ref_signal{seg_count-1}.stop = A;
+                end
+
+                seg_count = seg_count+2;
             end %for
 
         end %convert
@@ -135,22 +147,29 @@ classdef route_planner
 
             %break coords into line segments
             
+            
             if path_len==2
                 ref_array = [coords(:, 1); coords(:, 2); 0]; %[coords(1,1); coords(2,1); coords(1,2); coords(2,2); 0]; %path_segment(coords(:, 1), coords(:, 2), 0, [0; 0]);
             else
-                ref_array = zeros(5, path_len, 1, "double"); %[x_start; y_start; x_stop; y_stop; R]
+                ref_array = zeros(4, (2*path_len-3), 1, "double"); %[x_start; y_start; x_stop; y_stop; R]
+
+                ref_array(1:2, 1) = coords(:, 1);
+                ref_array(3:4, (2*path_len-3)) = coords(:, path_len);
 
                 for n = 1:(path_len - 2)
                     A = coords(:, n);
                     B = coords(:, n+1);
                     C = coords(:, n+2);
 
-                    [start_turn, end_turn, R, ~] = calc_turn(obj, A, B, C);
+                    [start_turn, end_turn] = get_points(obj, A, B, C); % calc_turn(obj, A, B, C);
+                    %disp(n)
 
-                    %break into segments
-                    ref_array(:,n) = [A; start_turn; 0];
-                    ref_array(:,n+1) = [start_turn; end_turn; R];
-                    ref_array(:,n+2) = [end_turn; C; 0];
+                    seg_count = 2*n;
+                    ref_array(1:2, seg_count) = start_turn;
+                    ref_array(3:4, seg_count) = end_turn;
+                    ref_array(3:4, seg_count-1) = start_turn;
+                    ref_array(1:2, seg_count+1) = end_turn;
+                    
                 end %for
             end %if
             
@@ -284,7 +303,7 @@ classdef route_planner
                     R = 0; 
                     start_turn = A;
                     end_turn = C;
-                    mid_pt = [0; 0];
+                    mid_pt = B;
                 end
             else
                 % get offsets
@@ -390,8 +409,26 @@ classdef route_planner
             elseif (d2 <= d_base)
                 point = [x2; y2];
             else
-                point = [0; 0];
+                point = [0; 0]
+                disp(d_base)
+                disp(d1)
+                disp(d2)
+                disp(start)
+                disp(stop)
             end
         end %calc point
+    
+        function [start_point, end_point] = get_points(obj, A, B, C)
+            angle_BA = atan((A(2)-B(2))/(A(1)-B(1)));
+            angle_CB = atan((B(2)-C(2))/(B(1)-C(1)));
+
+            R_min = 0.5; % minimum turn radius
+
+            start_point = B - [R_min*cos(angle_BA); R_min*sin(angle_BA)];
+            end_point = B + [R_min*cos(angle_CB); R_min*sin(angle_CB)];
+
+
+        end %get point
+    
     end %private methods
 end %classdef
