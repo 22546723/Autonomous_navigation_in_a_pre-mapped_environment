@@ -113,5 +113,3 @@ xlabel("Time [s]")
 ylabel("Angular velocity [rad/s]")
 title("Angular velocities")
 legend("Control", "Measured")
-
-

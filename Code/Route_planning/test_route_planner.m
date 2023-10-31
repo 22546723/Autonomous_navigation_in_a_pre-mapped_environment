@@ -1,6 +1,6 @@
 % Runs route_planner.m and displays the results
 s_node = 1;
-t_node = 6;
+t_node = 3;
 
 %now gets set in route planner class
 % map =  load('Maps/straight_line_test.mat');
@@ -29,7 +29,7 @@ title("Weighted graph")
 %%%%%%%%%%%%%%%%%%
 %plot reference signal
 nexttile(2, [2 1])
-ref_len = length(ref);
+ref_len = size(ref, 2);
 xr = zeros(ref_len+1, 1, 1, "double");
 yr = zeros(ref_len+1, 1, 1, "double");
 

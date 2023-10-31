@@ -31,7 +31,8 @@ classdef route_planner
             % Outputs:
             %   obj : route_planner object
 
-            map =  load('Maps/s_route_test.mat');
+            %map =  load('Maps/s_route_test.mat');
+            map =  load('Maps/straight_line_test.mat');
             obj.map = map.map_data;
         end %route_planner
 
@@ -420,12 +421,12 @@ classdef route_planner
     
         function [start_point, end_point] = get_points(obj, A, B, C)
             angle_BA = atan((A(2)-B(2))/(A(1)-B(1)));
-            angle_CB = atan((B(2)-C(2))/(B(1)-C(1)));
+            angle_BC = atan((C(2)-B(2))/(C(1)-B(1)));
 
             R_min = 0.5; % minimum turn radius
 
             start_point = B - [R_min*cos(angle_BA); R_min*sin(angle_BA)];
-            end_point = B + [R_min*cos(angle_CB); R_min*sin(angle_CB)];
+            end_point = B + [R_min*cos(angle_BC); R_min*sin(angle_BC)];
 
 
         end %get point
