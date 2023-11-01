@@ -1,6 +1,8 @@
 data = load("follow_route.mat");
 data = data.data;
 
+mapfile = 'Maps/straight_line_test.mat';
+
 %%% Read results %%%%%
 s_node = data.s_node.Data;
 t_node = data.t_node.Data;
@@ -15,7 +17,7 @@ w_control = data.w_control;
 error_angle = data.error_angle;
 
 %%%%% get reference coords %%%%
-planner = route_planner();
+planner = route_planner(mapfile);
 [path, distance]  = plot_route(planner, s_node, t_node);
 ref = get_ref_array(planner, s_node, t_node);
 
