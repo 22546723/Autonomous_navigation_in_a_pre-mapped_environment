@@ -8,7 +8,7 @@ classdef route_planner
 
         % Initialize the class
         function obj = route_planner()
-            map =  load('Maps/multi_route_test.mat');
+            map =  load('Final_code_and_results/multi_route_test.mat');
             obj.map = map.map_data;
         end 
 
@@ -70,7 +70,7 @@ classdef route_planner
         end 
     
         % Determine points a distance from B on both lines
-        function [start_point, end_point] = get_points(A, B, C)
+        function [start_point, end_point] = get_points(obj, A, B, C)
             %%%
             % Calculate the angles of lines AB and BC
             %%%    

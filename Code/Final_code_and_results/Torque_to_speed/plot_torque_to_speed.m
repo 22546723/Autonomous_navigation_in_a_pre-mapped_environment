@@ -26,23 +26,23 @@ J_right = T/a_right;
 
 left_val = 1/J_left;
 right_val = 1/J_right;
-
-hold on
-yyaxis right
-plot(torque.Time(start:stop), torque.Data(start:stop))
-
-yyaxis left
-plot(left_speed.Time(start:stop), left_speed.Data(start:stop))
-plot(right_speed.Time(start:stop), right_speed.Data(start:stop))
-hold off
-
-xlabel("Time [s]")
-yyaxis left
-ylabel("Wheel speed [rad/s]")
-
-yyaxis right
-ylabel("Torque [Nm]")
-
-legend("Torque", "Left wheel", "Right wheel")
-title("Torque vs speed results")
-grid on
+% 
+% hold on
+% yyaxis right
+% plot(torque.Time(start:stop), torque.Data(start:stop))
+% 
+% yyaxis left
+% plot(left_speed.Time(start:stop), left_speed.Data(start:stop))
+% plot(right_speed.Time(start:stop), right_speed.Data(start:stop))
+% hold off
+% 
+% xlabel("Time [s]")
+% yyaxis left
+% ylabel("Wheel speed [rad/s]")
+% 
+% yyaxis right
+% ylabel("Torque [Nm]")
+% 
+% legend("Torque", "Left wheel", "Right wheel")
+% title("Torque vs speed results")
+% grid on

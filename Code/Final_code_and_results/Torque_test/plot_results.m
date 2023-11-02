@@ -1,60 +1,39 @@
-data = load("Results//drive_syst_only/torque_control_results.mat");
+data = load("Final_code_and_results/Torque_test/straight_step.mat");
+%data = load("Final_code_and_results/Torque_test/turn_step.mat");
 data = data.data;
 
-figure
-plot_speeds(data)
+R_L = data.R_L;
+R_R = data.R_R;
+T_L = data.T_L;
+T_R = data.T_R;
+w_R = data.w_R_act;
+w_L = data.w_L_act;
 
-figure
-plot_angles(data)
+len = length(w_L.Data);
+stop = (4/0.01)+1;
 
-function plot_speeds(data)
-t = tiledlayout(2, 1);
-vals = zeros(length(data.v_out), 1, 1);
-
-for n = 1:length(data.v_out)
-    vals(n) = data.v_in.Data(1);
-end
-
-v_in = timeseries(vals, data.v_out.Time);
-
-nexttile
 hold on
-plot(v_in)
-plot(data.v_out)
-hold off
-grid on
-xlabel("Time [s]")
-ylabel("Speed [m/s]")
-title("Car speed response")
-legend("Reference speed", "Measured speed")
+yyaxis left
+%plot(R_L, '--b')
+plot(R_R, '--r')
+plot(w_L, '-b')
+plot(w_R, '-r')
 
-nexttile
-hold on
-plot(data.R_L)
-plot(data.R_R)
-plot(data.w_L_act)
-plot(data.w_R_act)
+yyaxis right
+plot(T_L, '-.b')
+plot(T_R, '-.r')
+
 hold off
-grid on
-xlabel("Time [s]")
+
+yyaxis left 
 ylabel("Speed [rad/s]")
-title("Wheel speed response")
-legend("Left wheel reference speed", "Right wheel reference speed", ...
-    "Left wheel measured speed", "Right wheel measured speed");
 
-title(t, "Response of the controlled drive system")
-end
+yyaxis right
+ylabel("Torque [Nm]")
 
-function plot_angles(data)
-hold on
-plot(data.w_in)
-plot(data.w_out)
-hold off
-grid on
 xlabel("Time [s]")
-ylabel("Angular velocity [rad/s]")
-title("Drive system response")
-legend("Reference angular velocity", "Measured angular velocity")
-end
-
-
+legend("Reference speed", "Left wheel", "Right wheel", ...
+    "Left torque", "Right torque")
+% legend("Left reference", "Right reference", "Left wheel", "Right wheel")
+% title("Torque controller step turn response")
+grid on

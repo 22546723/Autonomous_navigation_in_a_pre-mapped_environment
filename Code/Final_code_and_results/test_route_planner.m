@@ -1,11 +1,11 @@
 % Runs route_planner.m and displays the results
 s_node = 1;
-t_node = 2;
+t_node = 8;
 
 %now gets set in route planner class
 % map =  load('Maps/straight_line_test.mat');
 % map = map.map_data;
-mapfile = 'Maps/multi_route_test.mat';
+%mapfile = 'Maps/multi_route_test.mat';
 
 planner = route_planner();
 [path, distance]  = plot_route(planner, s_node, t_node);
