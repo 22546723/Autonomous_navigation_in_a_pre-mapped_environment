@@ -3,7 +3,7 @@ data = load("Final_code_and_results/Torque_test/straight_step.mat");
 data = data.data;
 
 R_L = data.R_L;
-R_R = data.R_R;
+%R_R = data.R_R;
 T_L = data.T_L;
 T_R = data.T_R;
 w_R = data.w_R_act;
@@ -14,8 +14,8 @@ stop = (4/0.01)+1;
 
 hold on
 yyaxis left
-%plot(R_L, '--b')
-plot(R_R, '--r')
+plot(R_L, '--b')
+%plot(R_R, '--r')
 plot(w_L, '-b')
 plot(w_R, '-r')
 
