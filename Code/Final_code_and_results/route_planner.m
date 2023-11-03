@@ -8,7 +8,7 @@ classdef route_planner
 
         % Initialize the class
         function obj = route_planner()
-            map =  load('Final_code_and_results/reduced_route_test.mat');
+            map =  load('Final_code_and_results/multi_route_test.mat');
             obj.map = map.map_data;
         end 
 
@@ -82,7 +82,7 @@ classdef route_planner
             %%%
             % Determine the points a distance from B on each line
             %%%
-            R_min = 0.6; % minimum turn radius
+            R_min = 0.8; % minimum turn radius
 
             % Get the points on both sides of B
             d_BA_x = R_min*cos(angle_BA);
