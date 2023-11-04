@@ -1,19 +1,20 @@
-data = load("Final_code_and_results/Full_system_test/1_6.mat");
-data = data.data;
+results = load("Monte_carlo_test/results.mat");
+results = results.results;
 
+sim_num = 1;
 
-%%% Read results %%%%%
-s_node = data.s_node.Data;
-t_node = data.t_node.Data;
-x = data.x;
-y = data.y;
-meas_speed = data.v_car;
-ref_speed = data.ref_speed;
-ref_angle = data.ref_angle;
-meas_angle = data.meas_angle;
-w_out = data.w_car;
-w_control = data.ref_w;
-error_angle = data.error_angle;
+s_node = results{sim_num, 1};
+t_node = results{sim_num, 2};
+x = results{sim_num, 3};
+y = results{sim_num, 4};
+ref_angle = results{sim_num, 5};
+meas_angle = results{sim_num, 6};
+error_angle = results{sim_num, 7};
+ref_speed = results{sim_num, 8};
+meas_speed = results{sim_num, 9};
+w_control = results{sim_num, 10};
+w_out = results{sim_num, 11};
+target_reached = results{sim_num, 12};
 
 %%%%% get reference coords %%%%
 planner = route_planner();
@@ -48,8 +49,10 @@ for n=1:len
 end
 
 %%% plot %%%%%%
-t = tiledlayout(3, 4);
-title(t, "Simulation results")
+f = figure;
+t = tiledlayout(3, 4, "TileSpacing","compact");
+title(t, "Simulation results from node "+s_node+" to node "+t_node)
+f.Position = [100 100 900 500];
 % 
 % %%%%% XY %%%%%%
 nexttile(1, [2, 2])
@@ -77,7 +80,7 @@ grid on
 xlabel("X [m]")
 ylabel("Y [m]")
 title("Car coordinates")
-legend("Reference", "Actual")
+legend("Reference", "Measured")
 
 %%%%% angles %%%%%%%
 nexttile(3, [2, 2])
@@ -89,19 +92,20 @@ hold off
 xlabel("Time [s]")
 ylabel("Angle [rad]")
 title("Car angles")
-legend("Reference", "Measured", "error")
+legend("Reference", "Measured", "Error")
+grid on
 % 
 %%%% speeds %%%%%
 nexttile(9, [1, 2])
 hold on
 plot(ref_speed, LineWidth=0.75)
-plot(meas_speed, LineWidth=0.75)    %Replace with actual speed
+plot(meas_speed, LineWidth=0.75) 
 hold off
 xlabel("Time [s]")
 ylabel("Speed [m/s]")
 title("Speeds")
 legend("Reference", "Measured")
-
+grid on
 %%%% w %%%%%
 nexttile(11, [1, 2])
 hold on
@@ -112,3 +116,4 @@ xlabel("Time [s]")
 ylabel("Angular velocity [rad/s]")
 title("Angular velocities")
 legend("Control", "Measured")
+grid on
