@@ -1,14 +1,12 @@
 classdef route_planner
-
     properties
         map;
     end 
 
     methods
-
         % Initialize the class
         function obj = route_planner()
-            map =  load('Final_code_and_results/multi_route_test.mat');
+            map =  load('multi_route_map.mat');
             obj.map = map.map_data;
         end 
 

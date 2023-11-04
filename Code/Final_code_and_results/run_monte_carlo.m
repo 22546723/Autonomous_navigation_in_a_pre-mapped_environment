@@ -1,20 +1,17 @@
+% Setup
+num_sims = 10;
+w_space = get_param('full_system', 'ModelWorkspace');
+results = cell(num_sims, 12); 
+
 % Initial values
 s_node = 1;
 t_node = 1;
-num_sims = 10;
 
-% Format: {s_node, t_node, x, y, worked}
-results = cell(num_sims, 12); 
-
-w_space = get_param('full_system', 'ModelWorkspace');
-%assignin(w_space, 't_node', 7)
-
-
+% Run simulations
 for n=1:num_sims
     while(t_node==s_node)
         t_node = int32(1 + (11-1)*rand(1, 1));
     end
-
 
     assignin(w_space, 's_node', s_node)
     assignin(w_space, 't_node', t_node)
